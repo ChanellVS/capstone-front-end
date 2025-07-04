@@ -1,0 +1,1 @@
+//Renders each message row with Edit/Delete functionality
