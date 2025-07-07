@@ -29,6 +29,16 @@ const Inbox = ({ token }) => {
         fetchMessages();
     }, [token]);
 
+    const handleDelete = (id) => {
+        setMessages((prev) => prev.filter((msg) => msg.id !== id));
+    };
+
+    const handleEdit = (updatedMessage) => {
+        setMessages((prev) =>
+            prev.map((msg) => (msg.id === updatedMessage.id ? updatedMessage : msg))
+        );
+    };
+
     return (
         <div>
             <h2>Your Messages</h2>
@@ -36,11 +46,11 @@ const Inbox = ({ token }) => {
             {error && <p>{error}</p>}
             {!loading && !error && messages.length === 0 && <p>No messages found</p>}
             {messages.length > 0 && (
-            <ul>
-                {messages.map((message) => (
-                    <InboxRow key={message.id} message={message} />
-                ))}
-            </ul>
+                <ul>
+                    {messages.map((message) => (
+                        <InboxRow key={message.id} message={message} onDelete={handleDelete} onEdit={handleEdit} />
+                    ))}
+                </ul>
             )}
         </div>
     );

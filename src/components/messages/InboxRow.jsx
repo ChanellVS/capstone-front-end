@@ -52,8 +52,8 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
 
             {editing ? (
                 <form onSubmit={handleEditSubmit}>
-                    <textarea value={editedContent} onChange={(e) => setEditedContent(e.target.value)}
-                    />
+                    <textarea autoFocus value={editedContent} onChange={(e) => setEditedContent(e.target.value)}
+                    ></textarea>
                     <button type="submit">Save</button>
                     <button type="button" onClick={() => setEditing(false)}>Cancel</button>
                 </form>
@@ -73,3 +73,4 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
 };
 
 export default InboxRow;
+
