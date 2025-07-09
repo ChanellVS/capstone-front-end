@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
+
 
 const BASE_URL = 'http://localhost:3000'; // I will Replace with my Render URL after deployment
 
@@ -45,6 +46,9 @@ export default function LoginForm() {
       <input name="username" placeholder="Username" onChange={handleChange} required />
       <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
       <button type="submit">Login</button>
+      <p>
+        Don’t have an account? <Link to="/register">Register here</Link>
+      </p>
     </form>
   );
 }

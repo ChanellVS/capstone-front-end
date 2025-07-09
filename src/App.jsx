@@ -28,7 +28,7 @@ function App() {
         <Route path="/register" element={<RegisterForm setToken={setToken} />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route path="/profile" element={<Profile token={token} />} />
-        <Route path="/" element={<Inbox token={token} />} />
+          <Route path="/inbox" element={<Inbox token={token} />} />
         
         <Route
           path="/message-form"
