@@ -14,7 +14,13 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Inbox token={token} />} />
+        <Route path="/"element={token ? <Navigate to="/profile"/> : <Navigate to="/login"/>} />
+        <Route path="/register" element={<RegisterForm setToken={setToken} />} />
+        <Route path="/login" element={<LoginForm setToken={setToken} />} />
+        <Route path="/profile" element={<Profile token={token} />} />
+          <Route path="/" element={<Inbox token={token} />} />
+        
+        <Route path="/" element={<Inbox token={token} />} /
         <Route
           path="/message-form"
           element={
