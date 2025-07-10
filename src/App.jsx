@@ -4,13 +4,29 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Inbox from "./components/messages/Inbox";
 import MessageForm from "./components/messages/MessageForm";
 import PetMessages from "./components/messages/PetMessages";
+import { useSocket } from "./context/SocketContext";
 import "./App.css";
 
 function App() {
   const [token, setToken] = useState(
     () => localStorage.getItem("authToken") || ""
   );
+  const socket = useSocket();
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleGlobalMessage = (msg) => {
+      console.log("New message received (global):", msg);
+    }
+
+    socket.on("receive_message", handleGlobalMessage);
+
+    return () => {
+      socket.off("receive_message", handleGlobalMessage);
+    };
+  }, [socket]);
+  
   return (
     <div>
       <Routes>
