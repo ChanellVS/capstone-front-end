@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const BASE_URL = 'http://localhost:3000'; // I will Change to Render URL when deploying
 
-export default function RegisterForm() {
+export default function RegisterForm({setToken}) {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', location: '', phone_number: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -27,6 +27,8 @@ export default function RegisterForm() {
 
       const data = await response.json();
 
+      console.log("Server response:", data);
+      
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setSuccess('Registration successful!');
