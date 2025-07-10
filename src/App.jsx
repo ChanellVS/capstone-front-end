@@ -8,17 +8,33 @@ import RegisterForm from "./components/account/RegisterForm";
 import LoginForm from "./components/account/LoginForm";
 import Profile from "./components/account/Profile";
 
+import { useSocket } from "./context/SocketContext";
 import "./App.css";
 
 function App() {
-  const [token, setToken] = useState(() => localStorage.getItem("token") || "");
+  const [token, setToken] = useState(() => localStorage.getItem("authToken") || "");
 
   useEffect(() => {
     if (token) {
-      localStorage.setItem("token", token);
+      localStorage.setItem("authToken", token);
     }
   }, [token]);
+  const socket = useSocket();
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleGlobalMessage = (msg) => {
+      console.log("New message received (global):", msg);
+    }
+
+    socket.on("receive_message", handleGlobalMessage);
+
+    return () => {
+      socket.off("receive_message", handleGlobalMessage);
+    };
+  }, [socket]);
+  
   return (
     <div>
       <Routes>

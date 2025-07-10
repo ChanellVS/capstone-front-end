@@ -1,11 +1,13 @@
 //Used to send a new message (POST)
 import { useState } from "react";
+import { useSocket } from "../../context/SocketContext";
 
 const MessageForm = ({ token, receiverId, petId, onMessageSent }) => {
   const [content, setContent] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
+  const socket = useSocket();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +37,10 @@ const MessageForm = ({ token, receiverId, petId, onMessageSent }) => {
       const newMessage = await res.json();
       setContent("");
       setSuccess("Message sent!");
+
       if (onMessageSent) onMessageSent(newMessage);
+
+
     } catch (error) {
       setError(error.message);
     } finally {

@@ -30,7 +30,7 @@ export default function RegisterForm({setToken}) {
       console.log("Server response:", data);
       
       if (response.ok) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
         setSuccess('Registration successful!');
         navigate('/profile');
       } else {

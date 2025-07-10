@@ -8,7 +8,7 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
 
       try {
         const response = await fetch(`${BASE_URL}/api/users/me`, {

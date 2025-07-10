@@ -29,7 +29,7 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
         navigate('/profile');
       } else {
         setError(data.error || 'Login failed.');
