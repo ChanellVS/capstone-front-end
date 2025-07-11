@@ -4,7 +4,7 @@ import { useNavigate, Link} from "react-router-dom";
 
 const BASE_URL = 'http://localhost:3000'; // I will Replace with my Render URL after deployment
 
-export default function LoginForm() {
+export default function LoginForm({setToken}) {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function LoginForm() {
 
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
-        navigate('/profile');
+        navigate('/'); // change to the landing page later so logged in visitors see the whole info
       } else {
         setError(data.error || 'Login failed.');
       }
