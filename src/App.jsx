@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
 import Homepage from "./components/account/Homepage";
 import RegisterForm from "./components/account/RegisterForm";
 import LoginForm from "./components/account/LoginForm";
@@ -39,6 +40,8 @@ function App() {
   }, [socket]);
 
   return (
+    <>
+    <Navbar token={token} setToken={setToken} />
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/register" element={<RegisterForm setToken={setToken} />} />
@@ -77,6 +80,7 @@ function App() {
         element={<PetMessages token={token} />}
       />
     </Routes>
+    </>
   );
 }
 

@@ -30,7 +30,8 @@ export default function LoginForm({setToken}) {
 
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
-        navigate('/'); // change to the landing page later so logged in visitors see the whole info
+        setToken(data.token); // <-- this triggers the Navbar to re-render
+        navigate('/');
       } else {
         setError(data.error || 'Login failed.');
       }
