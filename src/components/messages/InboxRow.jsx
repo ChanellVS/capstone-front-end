@@ -1,19 +1,27 @@
-//Renders each message row with Edit/Delete functionality
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const InboxRow = ({ message, onDelete, onEdit }) => {
+  if (!message) return null;
+
   const {
     id,
     sender_username,
     receiver_username,
+    sender_id,
+    pet_id,
     content,
     created_at,
     direction,
+    is_global,
   } = message;
 
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
+
+  useEffect(() => {
+    setEditedContent(content);
+  }, [content]);
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -55,8 +63,10 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
   return (
     <li>
       <p>
-        <strong>{direction === "sent" ? "To" : "From"}:</strong>
-        {direction === "sent" ? receiver_username : sender_username}
+        <strong>{direction === "sent" ? "To" : "From"}:</strong>{" "}
+        {direction === "sent"
+          ? receiver_username || "Everyone"
+          : sender_username || "Unknown"}
       </p>
       <p>
         <small>{new Date(created_at).toLocaleString()}</small>
@@ -65,22 +75,38 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
       {editing ? (
         <form onSubmit={handleEditSubmit}>
           <textarea
+            className="edit-textarea"
             autoFocus
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
           ></textarea>
-          <button type="submit">Save</button>
-          <button type="button" onClick={() => setEditing(false)}>
+          <button type="submit" className="save-button">Save</button>
+          <button type="button" className="cancel-button" onClick={() => setEditing(false)}>
             Cancel
           </button>
         </form>
       ) : (
         <>
           <p>{content}</p>
+
           {direction === "sent" && (
             <div>
               <button onClick={() => setEditing(true)}>Edit</button>
               <button onClick={handleDelete}>Delete</button>
+            </div>
+          )}
+
+          {direction === "received" && (
+            <div>
+              {is_global ? (
+                <Link to={`/message-form/global`}>
+                  <button>Reply to Everyone</button>
+                </Link>
+              ) : (
+                <Link to={`/message-form/${sender_id}/${pet_id || 0}`}>
+                  <button>Reply</button>
+                </Link>
+              )}
             </div>
           )}
         </>
