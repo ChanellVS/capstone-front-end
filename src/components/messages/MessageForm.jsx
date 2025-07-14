@@ -50,33 +50,41 @@ const MessageForm = ({ token, onMessageSent }) => {
     setError(null);
     setSuccess(null);
     setLoading(true);
-
+  
     try {
+      if (!isGlobal) {
+        if (!receiver || !pet) {
+          throw new Error("receiver_id and pet_id are required for private messages.");
+        }
+      }
+  
+      const body = {
+        receiver_id: isGlobal ? null : parseInt(receiver),
+        pet_id: isGlobal ? null : parseInt(pet),
+        content,
+        is_global: isGlobal,
+      };
+  
       const res = await fetch("/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          receiver_id: isGlobal ? null : parseInt(receiver),
-          pet_id: isGlobal ? null : parseInt(pet),
-          content,
-          isGlobal,
-        }),
+        body: JSON.stringify(body),
       });
-
+  
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to send message.");
       }
-
+  
       const newMessage = await res.json();
       setContent("");
       setReceiver("");
       setPet("");
       setSuccess("Message sent!");
-
+  
       if (onMessageSent) onMessageSent(newMessage);
     } catch (error) {
       setError(error.message);
@@ -84,6 +92,7 @@ const MessageForm = ({ token, onMessageSent }) => {
       setLoading(false);
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="message-form-container">
@@ -123,6 +132,7 @@ const MessageForm = ({ token, onMessageSent }) => {
               id="pet"
               value={pet}
               onChange={(e) => setPet(e.target.value)}
+              disabled={!receiver}
             >
               <option value="">-- Select a pet --</option>
               {pets.map((pet) => (

@@ -60,13 +60,17 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
     }
   };
 
+  const displayUser =
+    direction === "sent"
+      ? receiver_username || "Everyone"
+      : sender_username || (is_global ? "Unknown Sender" : "Unknown");
+
+  const directionLabel = direction === "sent" ? "To" : "From";
+
   return (
     <li>
       <p>
-        <strong>{direction === "sent" ? "To" : "From"}:</strong>{" "}
-        {direction === "sent"
-          ? receiver_username || "Everyone"
-          : sender_username || "Unknown"}
+        <strong>{directionLabel}:</strong> {displayUser}
       </p>
       <p>
         <small>{new Date(created_at).toLocaleString()}</small>
@@ -96,7 +100,7 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
             </div>
           )}
 
-          {direction === "received" && (
+          {direction !== "sent" && (
             <div>
               {is_global ? (
                 <Link to={`/message-form/global`}>
