@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Homepage from "./components/account/Homepage";
+//import Posts from ;
 import RegisterForm from "./components/account/RegisterForm";
 import LoginForm from "./components/account/LoginForm";
 import Profile from "./components/account/Profile";
@@ -44,6 +45,7 @@ function App() {
       <Navbar token={token} setToken={setToken} />
       <Routes>
         <Route path="/" element={<Homepage />} />
+        {/*<Route path="/posts" element={<Posts />} />*/}
         <Route path="/register" element={<RegisterForm setToken={setToken} />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route

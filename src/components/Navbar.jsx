@@ -18,7 +18,8 @@ const Navbar = ({ token, setToken }) => {
       </div>
       <ul>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/post">Post a Pet</Link></li>
+        <li><Link to="/posts">View Listings</Link></li> 
+        <li><Link to="/postPet">Post a Pet</Link></li>
 
         {!token ? (
           <>
