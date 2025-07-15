@@ -10,6 +10,9 @@ import Inbox from "./components/messages/Inbox";
 import MessageForm from "./components/messages/MessageForm";
 import PetMessages from "./components/messages/PetMessages";
 import ProtectedRoute from "./components/account/ProtectedRoute";
+import ViewListings from "./components/ViewListings.jsx";
+import PostPetForm   from "./components/PostPetForm.jsx";
+
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
@@ -71,7 +74,14 @@ function App() {
       <Navbar token={token} setToken={setToken} />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        {/* <Route path="/posts" element={<Posts />} /> */}
+        <Route path="/posts" element={<ViewListings />} />
+       <Route path="/postPet" 
+       element={
+           <ProtectedRoute token={token}>
+              <PostPetForm token={token} />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/register" element={<RegisterForm setToken={setToken} />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route
