@@ -102,15 +102,11 @@ const InboxRow = ({ message, onDelete, onEdit }) => {
 
           {direction !== "sent" && (
             <div>
-              {is_global ? (
-                <Link to={`/message-form/global`}>
-                  <button>Reply to Everyone</button>
-                </Link>
-              ) : (
+              
                 <Link to={`/message-form/${sender_id}/${pet_id || 0}`}>
                   <button>Reply</button>
                 </Link>
-              )}
+            
             </div>
           )}
         </>
