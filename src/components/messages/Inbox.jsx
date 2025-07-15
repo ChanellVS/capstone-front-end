@@ -1,59 +1,7 @@
-import { useEffect, useState } from "react";
-import { useSocket } from "../../context/SocketContext.jsx";
 import InboxRow from "./InboxRow.jsx";
 import { Link } from "react-router-dom";
 
-const Inbox = ({ token }) => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const socket = useSocket();
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/messages/inbox", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) throw new Error("Failed to fetch messages.");
-        const data = await res.json();
-        setMessages(data);
-      } catch (error) {
-        setError(error.message);
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMessages();
-  }, [token]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleNewMessage = (newMessage) => {
-      const currentUserId = JSON.parse(atob(token.split(".")[1])).id;
-
-      const isRelevant =
-        newMessage.receiver_id === currentUserId || // direct message
-        newMessage.sender_id === currentUserId || // sent by current user
-        newMessage.receiver_id === null; // global message
-
-      if (!isRelevant) return;
-
-      setMessages((prev) => {
-        const exists = prev.some((msg) => msg.id === newMessage.id);
-        return exists ? prev : [newMessage, ...prev];
-      });
-    };
-
-    socket.on("receive_message", handleNewMessage);
-    return () => socket.off("receive_message", handleNewMessage);
-  }, [socket, token]);
-
+const Inbox = ({ token, messages, setMessages }) => {
   const handleDelete = (id) => {
     setMessages((prev) => prev.filter((msg) => msg.id !== id));
   };
@@ -76,11 +24,9 @@ const Inbox = ({ token }) => {
         Compose New Message
       </Link>
 
-      {loading && <p>Loading messages...</p>}
-      {error && <p>{error}</p>}
-      {!loading && !error && messages.length === 0 && <p>No messages found</p>}
-
-      {messages.length > 0 && (
+      {messages.length === 0 ? (
+        <p>No messages found</p>
+      ) : (
         <ul>
           {messages.map((message) => (
             <InboxRow

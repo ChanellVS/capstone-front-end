@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Homepage from "./components/account/Homepage";
-//import Posts from ;
 import RegisterForm from "./components/account/RegisterForm";
 import LoginForm from "./components/account/LoginForm";
 import Profile from "./components/account/Profile";
@@ -17,6 +16,8 @@ import "./App.css";
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem("authToken") || "");
+  const [messages, setMessages] = useState([]);
+  const socket = useSocket();
 
   useEffect(() => {
     if (token) {
@@ -24,28 +25,53 @@ function App() {
     }
   }, [token]);
 
-  const socket = useSocket();
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch("/api/messages/inbox", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch messages.");
+        const data = await res.json();
+        setMessages(data);
+      } catch (err) {
+        console.error("Failed to load messages:", err);
+      }
+    };
+
+    fetchMessages();
+  }, [token]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !token) return;
 
-    const handleGlobalMessage = (msg) => {
-      console.log("New message received (global):", msg);
+    const currentUserId = JSON.parse(atob(token.split(".")[1])).id;
+
+    const handleMessage = (msg) => {
+      const isRelevant =
+        msg.receiver_id === currentUserId || // private message
+        msg.sender_id === currentUserId || // sent by user
+        msg.receiver_id === null; // global
+
+      if (!isRelevant) return;
+
+      setMessages((prev) => {
+        const exists = prev.some((m) => m.id === msg.id);
+        return exists ? prev : [msg, ...prev];
+      });
     };
 
-    socket.on("receive_message", handleGlobalMessage);
-
-    return () => {
-      socket.off("receive_message", handleGlobalMessage);
-    };
-  }, [socket]);
+    socket.on("receive_message", handleMessage);
+    return () => socket.off("receive_message", handleMessage);
+  }, [socket, token]);
 
   return (
     <>
       <Navbar token={token} setToken={setToken} />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        {/*<Route path="/posts" element={<Posts />} />*/}
+        {/* <Route path="/posts" element={<Posts />} /> */}
         <Route path="/register" element={<RegisterForm setToken={setToken} />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route
@@ -60,7 +86,7 @@ function App() {
           path="/inbox"
           element={
             <ProtectedRoute token={token}>
-              <Inbox token={token} />
+              <Inbox token={token} messages={messages} setMessages={setMessages} />
             </ProtectedRoute>
           }
         />
@@ -72,7 +98,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/pet/:id/messages"
           element={<PetMessages token={token} />}
