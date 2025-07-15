@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useNavigate, Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useSocket } from "../../context/SocketContext";
+import { jwtDecode } from "jwt-decode";
 
+const BASE_URL = 'http://localhost:3000';
 
-const BASE_URL = 'http://localhost:3000'; // I will Replace with my Render URL after deployment
-
-export default function LoginForm({setToken}) {
+export default function LoginForm({ setToken }) {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const socket = useSocket();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,7 +32,15 @@ export default function LoginForm({setToken}) {
 
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
-        setToken(data.token); // <-- this triggers the Navbar to re-render
+        setToken(data.token);
+
+        //Decodes token to get user ID and join their room
+        const decoded = jwtDecode(data.token);
+        if (socket && decoded?.id) {
+          socket.emit("join_room", `user_${decoded.id}`);
+          console.log(`Joined room: user_${decoded.id}`);
+        }
+
         navigate('/');
       } else {
         setError(data.error || 'Login failed.');
