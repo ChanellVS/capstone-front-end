@@ -12,7 +12,7 @@ import PetMessages from "./components/messages/PetMessages";
 import ProtectedRoute from "./components/account/ProtectedRoute";
 import ViewListings from "./components/ViewListings.jsx";
 import PostPetForm   from "./components/PostPetForm.jsx";
-
+import PetDetail   from "./components/PetDetail.jsx";
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
@@ -79,6 +79,22 @@ function App() {
        element={
            <ProtectedRoute token={token}>
               <PostPetForm token={token} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pet/:petId"
+          element={
+            <ProtectedRoute token={token}>
+              <PetDetail token={token} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pet/:petId/messages"
+          element={
+            <ProtectedRoute token={token}>
+              <PetMessages token={token} />
             </ProtectedRoute>
           }
         />

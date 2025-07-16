@@ -35,7 +35,7 @@ export default function ViewListings() {
                      className="pet-thumbnail" />
               )}
               <h3>
-                <Link to={`/pet/${pet.id}/messages`}>
+                <Link to={`/pet/${pet.id}`}>
                   {pet.name}
                 </Link>
                 {" "}
