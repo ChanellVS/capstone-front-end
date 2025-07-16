@@ -262,3 +262,81 @@
     padding: 0.5rem;
     font-size: 1rem;
   }
+
+  .post-pet-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.post-pet-form h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.post-pet-form input,
+.post-pet-form select,
+.post-pet-form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.inline-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.inline-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+legend {
+  padding: 0 0.5rem;
+  font-weight: bold;
+}
+
+.post-pet-form button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #28a745;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-pet-form button[disabled] {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b00;
+  margin: 0.5rem 0;
+}
