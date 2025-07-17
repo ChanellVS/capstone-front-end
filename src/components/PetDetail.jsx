@@ -28,7 +28,7 @@ export default function PetDetail({ token }) {
   }, [petId, token]);
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!pet)  return <p>Loading pet…</p>;
+  if (!pet) return <p>Loading pet…</p>;
 
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
@@ -72,12 +72,13 @@ export default function PetDetail({ token }) {
           </Marker>
         </MapContainer>
       )}
+      <div className="button-group">
+        <Link to="/posts">
+          <button className="nav-button">← Back to Listings</button>
+        </Link>
 
-      <div style={{ marginTop: 16 }}>
-        <Link to="/posts">← Back to listings</Link>{" "}
-        |{" "}
-        <Link to={`/pet/${petId}/messages`}>
-          View / Send Messages
+        <Link to={`/messages/pet/${petId}`}>
+          <button className="nav-button">View / Send Messages</button>
         </Link>
       </div>
     </div>

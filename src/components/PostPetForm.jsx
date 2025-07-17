@@ -16,7 +16,7 @@ export default function PostPetForm({ token }) {
     type:        petTypes[0],
     status:      statusOptions[0],
     description: "",
-    image_url:   "",
+    file: null,
     state:       null,   // will hold { value, label }
     city:        null,   // will hold { value, label }
   });
@@ -65,6 +65,11 @@ export default function PostPetForm({ token }) {
       setError("Please select both state and city from the dropdowns.");
       return;
     }
+  
+    if (!form.file) {
+      setError("Please upload an image.");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -73,25 +78,53 @@ export default function PostPetForm({ token }) {
     const location = `${form.city.value}, ${form.state.label}`;
 
     try {
-      const res = await fetch("/api/pets", {
+        // 1. Get signed URL
+        const res1 = await fetch("/api/s3/sign-url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            fileName: form.file.name,
+            fileType: form.file.type
+          })
+        });
+  
+        if (!res1.ok) throw new Error("Failed to get upload URL.");
+        const { signedUrl, publicUrl } = await res1.json();
+  
+        // 2. Upload to S3
+        const uploadRes = await fetch(signedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": form.file.type
+          },
+          body: form.file
+        });
+        
+        if (!uploadRes.ok) throw new Error("Upload to S3 failed.");
+      // 3. Submit pet info with public URL
+      const petRes = await fetch("/api/pets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          name:        form.name,
-          type:        form.type,
-          status:      form.status,
+          name: form.name,
+          type: form.type,
+          status: form.status,
           description: form.description,
-          image_url:   form.image_url,
-          location,
-        }),
+          image_url: publicUrl,
+          location
+        })
       });
 
-      if (!res.ok) {
-        const data = await res.json();
+      if (!petRes.ok) {
+        const data = await petRes.json();
         throw new Error(data.error || "Failed to post pet.");
+      
       }
       navigate("/posts");
     } catch (err) {
@@ -164,12 +197,14 @@ export default function PostPetForm({ token }) {
       </div>
 
       <div className="form-group">
-        <label>Image URL (optional)</label>
+        <label>Image Upload</label>
         <input
-          name="image_url"
-          value={form.image_url}
-          onChange={handleChange}
-          placeholder="https://…"
+          type="file"
+          accept="image/*"
+          name="image"
+          id="image"
+          onChange={(e) => setForm((f) => ({ ...f, file: e.target.files[0] }))}
+          required
         />
       </div>
 
