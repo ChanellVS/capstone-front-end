@@ -1,16 +1,20 @@
 //Displays all messages related to a specific pet id
 import { useEffect, useState } from "react";
 import InboxRow from "./InboxRow";
+import { useParams } from "react-router-dom";
 
-const PetMessages = ({ petId, token }) => {
+const PetMessages = ({ token }) => {
+  const { petId } = useParams();
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPetMessages = async () => {
       try {
-        const res = await fetch(`/api/messages/pet/${petId}`, {
+        setLoading(prev => !prev)
+        console.log(token);
+        const res = await fetch(`http://localhost:3000/api/messages/pet/${petId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -19,12 +23,11 @@ const PetMessages = ({ petId, token }) => {
         if (!res.ok) throw new Error("Failed to load messages for this pet.");
         const data = await res.json();
         setMessages(data);
+        setLoading(prev => !prev)
       } catch (error) {
         console.error(error);
         setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     if (petId) fetchPetMessages();
@@ -48,7 +51,7 @@ const PetMessages = ({ petId, token }) => {
       {!loading && !error && messages.length === 0 && (
         <p>No messages for this pet.</p>
       )}
-      {messages.length > 0 && (
+      {messages && (
         <ul>
           {messages.map((message) => (
             <InboxRow

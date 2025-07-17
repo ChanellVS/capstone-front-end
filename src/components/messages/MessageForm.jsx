@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 const MessageForm = ({ token, onMessageSent }) => {
   const { receiverId, petId } = useParams();
-  const isGlobalRoute = receiverId === "global";
+  const isGlobalRoute = receiverId === "global";//Sets the mode depending on the route. 
 
   const [content, setContent] = useState("");
   const [receiver, setReceiver] = useState(receiverId !== "global" ? receiverId : "");
@@ -45,26 +45,46 @@ const MessageForm = ({ token, onMessageSent }) => {
     fetchData();
   }, [token]);
 
+  //Ensures the UI responds to route changes. 
+  useEffect(() => {
+    if (isGlobalRoute) {
+      setIsGlobal(true);
+    } else {
+      setIsGlobal(false);//Reset on navigation
+    }
+  }, [isGlobalRoute]);
+
+  //Clears state on global toggle. Prevents accidental sending of private data with a global message. 
+  useEffect(() => {
+    if (isGlobal) {
+      setReceiver("");
+      setPet("");
+    }
+  }, [isGlobal]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
     setLoading(true);
-  
+
     try {
+      if (!content.trim()) {
+        setSuccess(null); // Clear any previous success message
+        throw new Error("Please enter a valid message.");
+      }
       if (!isGlobal) {
         if (!receiver || !pet) {
-          throw new Error("receiver_id and pet_id are required for private messages.");
+          throw new Error("Please select both a user and a pet before sending a private message.");
         }
       }
-  
+
       const body = {
         receiver_id: isGlobal ? null : parseInt(receiver),
         pet_id: isGlobal ? null : parseInt(pet),
         content,
         is_global: isGlobal,
       };
-  
+
       const res = await fetch("/api/messages", {
         method: "POST",
         headers: {
@@ -73,18 +93,18 @@ const MessageForm = ({ token, onMessageSent }) => {
         },
         body: JSON.stringify(body),
       });
-  
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to send message.");
       }
-  
+
       const newMessage = await res.json();
       setContent("");
       setReceiver("");
       setPet("");
       setSuccess("Message sent!");
-  
+
       if (onMessageSent) onMessageSent(newMessage);
     } catch (error) {
       setError(error.message);
@@ -92,7 +112,7 @@ const MessageForm = ({ token, onMessageSent }) => {
       setLoading(false);
     }
   };
-  
+
 
   return (
     <form onSubmit={handleSubmit} className="message-form-container">
@@ -101,7 +121,9 @@ const MessageForm = ({ token, onMessageSent }) => {
           type="checkbox"
           id="global"
           checked={isGlobal}
-          onChange={() => setIsGlobal(!isGlobal)}
+          onChange={() => {
+            if (!isGlobalRoute) setIsGlobal(!isGlobal);
+          }}
           disabled={isGlobalRoute}
         />
         <label htmlFor="global">Send Global Message</label>
@@ -150,18 +172,27 @@ const MessageForm = ({ token, onMessageSent }) => {
         <textarea
           id="content"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+            setSuccess(null);
+          }}
           required
         ></textarea>
       </div>
 
-      <button type="submit" disabled={loading}>
+      {/*Disables submit button until there is input*/}
+      <button type="submit" disabled={loading || !content.trim()}>
         {loading ? "Sending..." : "Send Message"}
       </button>
+      {
+        !content.trim() && !success && (
+          <p style={{ color: "orange" }}>Please enter a valid message.</p>
+        )
+      }
 
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
-    </form>
+    </form >
   );
 };
 

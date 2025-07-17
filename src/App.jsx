@@ -11,14 +11,14 @@ import MessageForm from "./components/messages/MessageForm";
 import PetMessages from "./components/messages/PetMessages";
 import ProtectedRoute from "./components/account/ProtectedRoute";
 import ViewListings from "./components/ViewListings.jsx";
-import PostPetForm   from "./components/PostPetForm.jsx";
-import PetDetail   from "./components/PetDetail.jsx";
+import PostPetForm from "./components/PostPetForm.jsx";
+import PetDetail from "./components/PetDetail.jsx";
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
 
 function App() {
-  const [token, setToken] = useState(() => localStorage.getItem("authToken") || "");
+  const [token, setToken] = useState(localStorage.getItem("authToken") || null);
   const [messages, setMessages] = useState([]);
   const socket = useSocket();
 
@@ -75,9 +75,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/posts" element={<ViewListings />} />
-       <Route path="/postPet" 
-       element={
-           <ProtectedRoute token={token}>
+        <Route path="/postPet"
+          element={
+            <ProtectedRoute token={token}>
               <PostPetForm token={token} />
             </ProtectedRoute>
           }
@@ -91,7 +91,7 @@ function App() {
           }
         />
         <Route
-          path="/pet/:petId/messages"
+          path="/messages/pet/:petId"
           element={
             <ProtectedRoute token={token}>
               <PetMessages token={token} />
@@ -116,6 +116,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/message-form/:receiverId/:petId"
           element={
@@ -125,8 +126,12 @@ function App() {
           }
         />
         <Route
-          path="/pet/:id/messages"
-          element={<PetMessages token={token} />}
+          path="/message-form"
+          element={
+            <ProtectedRoute token={token}>
+              <MessageForm token={token} />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </>
