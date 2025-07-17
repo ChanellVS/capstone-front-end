@@ -47,7 +47,7 @@ useEffect(() => {
       
       const data = await response.json();
     setSavedPets(data);
-      console.log(data)
+      
         
       if(data === null || data.length === 0) {
         setErrSavedPets(data.error || 'No saved pets found for user.');
@@ -103,7 +103,7 @@ const deletePet = async (petId, userId) => {
           {savedPets.length > 0 ? (
             <ul>
               {savedPets.map((pet) => (
-                <li key={pet.id}>
+                <li key={pet.id} className = "saved-pet">
                   <p><strong>Name:</strong> {pet.name}</p>
                   <p><strong>Type:</strong> {pet.type}</p>
                   <p><strong>Description:</strong> {pet.description}</p>
