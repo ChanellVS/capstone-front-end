@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 
 const BASE_URL = 'http://localhost:3000'; // I will Replace with Render URL later for deployment
 
@@ -62,6 +62,31 @@ useEffect(() => {
   fetchSavedPets();
 }, [user]);
 
+const deletePet = async (petId, userId) => {
+  const token = localStorage.getItem('authToken');
+  userId = user.id;
+  
+  try {
+    const response = await fetch(`${BASE_URL}/api/pets/${petId}/save`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+
+    if (response.ok) {
+      setSavedPets(savedPets.filter(pet => pet.id !== petId));
+      alert('Pet deleted successfully!');
+    } else {
+      const data = await response.json();
+      alert(data.error || 'Failed to delete pet.');
+    }
+  } catch (err) {
+    console.error('Error deleting pet:', err);
+    alert('Something went wrong while deleting the pet.');
+  }
+}
+
   return (
     <div>
       <h2>My Profile</h2>
@@ -85,13 +110,17 @@ useEffect(() => {
                   <p><strong>Status:</strong> {pet.status}</p>
                   <p><strong>Location:</strong> {pet.location}</p>
                   <p><strong>Post Created:</strong> {pet.created_at}</p>
+                  <button onClick={()=>deletePet(pet.id, user.id)}>Delete Pet</button>
                 </li>
               ))}
+              
             </ul>
           ) : 
             <p>{errSavedPets}</p>
-          }
+          } 
+          
         </div>
+       
       ) : (
         !error && <p>Loading...</p>
       )}

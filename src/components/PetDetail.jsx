@@ -7,8 +7,10 @@ import {
   Marker,
   Popup
 } from "react-leaflet";
+import {jwtDecode} from "jwt-decode";
 
 export default function PetDetail({ token }) {
+
   const { petId } = useParams();
   const [pet, setPet] = useState(null);
   const [error, setError] = useState("");
@@ -29,6 +31,40 @@ export default function PetDetail({ token }) {
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!pet) return <p>Loading pet…</p>;
+
+
+const handleSave = async () => {
+  const token = localStorage.getItem('authToken');
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.id;
+  const timestamp = new Date().toISOString();
+
+  try {
+    const response = await fetch(`http://localhost:5173/api/pets/${petId}/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        user_id: userId,
+        pet_id: petId,
+         saved_at: timestamp,
+       })
+    });
+
+    if (response.ok) {
+      alert('Pet saved successfully!');
+    } else {
+      const data = await response.json();
+      alert(data.error || 'Failed to save pet.');
+    }
+  } catch (err) {
+    console.error('Error saving pet:', err);
+    alert('Something went wrong while saving the pet.');
+  }
+}
+
 
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
@@ -80,6 +116,7 @@ export default function PetDetail({ token }) {
         <Link to={`/messages/pet/${petId}`}>
           <button className="nav-button">View / Send Messages</button>
         </Link>
+        <button onClick= {()=>handleSave()}>Save Pet</button>
       </div>
     </div>
   );
