@@ -31,6 +31,7 @@ export default function RegisterForm({setToken}) {
       
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
+        setToken(data.token); 
         setSuccess('Registration successful!');
         navigate('/profile');
       } else {
