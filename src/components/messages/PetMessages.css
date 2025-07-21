@@ -1,0 +1,95 @@
+.pet-messages-container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 4rem auto;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.25);
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .pet-messages-container h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 5px cyan, 0 0 10px #2196f3;
+    text-align: center;
+  }
+  
+  .pet-messages-container p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0a0b0b;
+    margin: 1rem 0;
+    text-align: left;
+    text-shadow: 
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #00ffff,
+      0 0 40px #00ffff;
+  }
+  
+  .message-button {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    color: #000;
+    background: linear-gradient(90deg, #00ffe7, #2979ff);
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 2rem;
+  }
+  
+  .message-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+  }
+  
+  /* Scoped list styling */
+  .pet-messages-container ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  /* Message Card Styling */
+  .pet-messages-container .message-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.15);
+    color: #fff;
+    text-align: left;
+  }
+  
+  .pet-messages-container .message-sender {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #00ffff;
+    text-shadow: 0 0 6px #00ffff;
+  }
+  
+  .pet-messages-container .message-date {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 4px #2196f3;
+  }
+  
+  .pet-messages-container .message-content {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #f2f2f2;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  }

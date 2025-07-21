@@ -10,9 +10,9 @@ import Inbox from "./components/messages/Inbox";
 import MessageForm from "./components/messages/MessageForm";
 import PetMessages from "./components/messages/PetMessages";
 import ProtectedRoute from "./components/account/ProtectedRoute";
-import ViewListings from "./components/ViewListings.jsx";
-import PostPetForm from "./components/PostPetForm.jsx";
-import PetDetail from "./components/PetDetail.jsx";
+import ViewListings from "./components/pets/ViewListings.jsx";
+import PostPetForm from "./components/pets/PostPetForm.jsx";
+import PetDetail from "./components/pets/PetDetail.jsx";
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
@@ -53,9 +53,9 @@ function App() {
 
     const handleMessage = (msg) => {
       const isRelevant =
-        msg.receiver_id === currentUserId || // private message
-        msg.sender_id === currentUserId || // sent by user
-        msg.receiver_id === null; // global
+        msg.receiver_id === currentUserId ||
+        msg.sender_id === currentUserId ||
+        msg.receiver_id === null;
 
       if (!isRelevant) return;
 
@@ -72,39 +72,15 @@ function App() {
   return (
     <>
       <Navbar token={token} setToken={setToken} />
+
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/posts" element={<ViewListings />} />
-        <Route path="/postPet"
+        <Route
+          path="/postPet"
           element={
             <ProtectedRoute token={token}>
               <PostPetForm token={token} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/pet/:petId"
-          element={
-            <ProtectedRoute token={token}>
-              <PetDetail token={token} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/messages/pet/:petId"
-          element={
-            <ProtectedRoute token={token}>
-              <PetMessages token={token} />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/register" element={<RegisterForm setToken={setToken} />} />
-        <Route path="/login" element={<LoginForm setToken={setToken} />} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute token={token}>
-              <Profile token={token} />
             </ProtectedRoute>
           }
         />
@@ -116,7 +92,32 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute token={token}>
+              <Profile token={token} />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/register" element={<RegisterForm setToken={setToken} />} />
+        <Route path="/login" element={<LoginForm setToken={setToken} />} />
+        <Route
+          path="/messages/pet/:petId"
+          element={
+            <ProtectedRoute token={token}>
+              <PetMessages token={token} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pet/:petId"
+          element={
+            <ProtectedRoute token={token}>
+              <PetDetail token={token} />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/message-form/:receiverId/:petId"
           element={

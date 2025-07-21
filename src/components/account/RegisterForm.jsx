@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./AuthForm.css";
 
 const BASE_URL = 'http://localhost:3000'; // I will Change to Render URL when deploying
 
@@ -43,7 +44,7 @@ export default function RegisterForm({setToken}) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="auth-form-container">
       <h2>Register</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}

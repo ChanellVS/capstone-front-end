@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+.post-pet-form {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Orbitron', sans-serif;
+  color: #f1f1f1;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.post-pet-form h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #66ffff;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 5px #00ffff;
+}
+
+.form-group {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+}
+
+.post-pet-form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #ccf2ff;
+}
+
+.post-pet-form input[type="text"],
+.post-pet-form input[type="file"],
+.post-pet-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: inset 0 0 6px rgba(0, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.post-pet-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.inline-group {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.inline-group label {
+  color: #e0f7fa;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.inline-group input[type="radio"] {
+  accent-color: #00ffff;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Error Message */
+.post-pet-form .error {
+  color: #ff6b6b;
+  font-weight: bold;
+  margin: 0.75rem 0;
+  text-align: center;
+}
+
+/* --- React Select Styling --- */
+.form-group .css-13cymwt-control,
+.form-group .css-t3ipsp-control {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 5px #00ffff !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  min-height: 40px;
+}
+
+.form-group .css-1nmdiq5-menu {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  color: #ffffff !important;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 8px #00ffff;
+  z-index: 9999 !important;
+  position:  relative !important;
+}
+
+.form-group .css-qbdosj-Input,
+.form-group .css-166bipr-Input {
+  color: #ffffff !important;
+}
+
+.form-group .css-1jqq78o-placeholder {
+  color: #88f9ff !important;
+}
+
+.form-group .css-1dimb5e-singleValue {
+  color: #ffffff !important;
+}
+
+/* --- Submit Button --- */
+button[type="submit"] {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00ffff, #3366ff);
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #3366ff;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(135deg, #00ccff, #0033cc);
+  color: white;
+  box-shadow: 0 0 12px #00ccff, 0 0 24px #0033cc;
+}
+
+button:disabled {
+  background-color: #555;
+  color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
