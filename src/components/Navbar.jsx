@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = ({ token, setToken }) => {
   const navigate = useNavigate();
@@ -10,13 +11,14 @@ const Navbar = ({ token, setToken }) => {
   };
 
   return (
-    <nav>
+    <div className="navbar-container">
       <div className="logo-container">
         <Link to="/">
-          <img src="/logo3.png" alt="404: Pet Not Found Logo" className="nav-logo" />
+          <img src="/Untitled (4).png" alt="404: Pet Not Found Logo" className="nav-logo" />
         </Link>
       </div>
-      <ul>
+
+      <ul className="nav-links">
         <li><Link to="/">Home</Link></li>
         <li><Link to="/posts">View Listings</Link></li> 
         <li><Link to="/postPet">Post a Pet</Link></li>
@@ -30,11 +32,11 @@ const Navbar = ({ token, setToken }) => {
           <>
             <li><Link to="/profile">My Profile</Link></li>
             <li><Link to="/inbox">Messages</Link></li>
-            <li><button onClick={handleLogout}>Logout</button></li>
+            <li><button className="nav-button" onClick={handleLogout}>Logout</button></li>
           </>
         )}
       </ul>
-    </nav>
+    </div>
   );
 };
 

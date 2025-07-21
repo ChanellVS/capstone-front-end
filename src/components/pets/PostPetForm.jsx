@@ -1,10 +1,11 @@
 // src/components/PostPetForm.jsx
 import { useState, useMemo } from "react";
-import { useNavigate }      from "react-router-dom";
-import Select               from "react-select";
-import { State, City }      from "country-state-city";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { State, City } from "country-state-city";
+import "./PostPetForm.css";
 
-const petTypes      = ["Dog", "Cat", "Other"];
+const petTypes = ["Dog", "Cat", "Other"];
 const statusOptions = ["Lost", "Found"];
 
 export default function PostPetForm({ token }) {
@@ -12,15 +13,15 @@ export default function PostPetForm({ token }) {
 
   // form state
   const [form, setForm] = useState({
-    name:        "",
-    type:        petTypes[0],
-    status:      statusOptions[0],
+    name: "",
+    type: petTypes[0],
+    status: statusOptions[0],
     description: "",
     file: null,
-    state:       null,   // will hold { value, label }
-    city:        null,   // will hold { value, label }
+    state: null,   // will hold { value, label }
+    city: null,   // will hold { value, label }
   });
-  const [error, setError]     = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // build react-select options for states once
@@ -65,7 +66,7 @@ export default function PostPetForm({ token }) {
       setError("Please select both state and city from the dropdowns.");
       return;
     }
-  
+
     if (!form.file) {
       setError("Please upload an image.");
       return;
@@ -78,32 +79,32 @@ export default function PostPetForm({ token }) {
     const location = `${form.city.value}, ${form.state.label}`;
 
     try {
-        // 1. Get signed URL
-        const res1 = await fetch("/api/s3/sign-url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            fileName: form.file.name,
-            fileType: form.file.type
-          })
-        });
-  
-        if (!res1.ok) throw new Error("Failed to get upload URL.");
-        const { signedUrl, publicUrl } = await res1.json();
-  
-        // 2. Upload to S3
-        const uploadRes = await fetch(signedUrl, {
-          method: "PUT",
-          headers: {
-            "Content-Type": form.file.type
-          },
-          body: form.file
-        });
-        
-        if (!uploadRes.ok) throw new Error("Upload to S3 failed.");
+      // 1. Get signed URL
+      const res1 = await fetch("/api/s3/sign-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fileName: form.file.name,
+          fileType: form.file.type
+        })
+      });
+
+      if (!res1.ok) throw new Error("Failed to get upload URL.");
+      const { signedUrl, publicUrl } = await res1.json();
+
+      // 2. Upload to S3
+      const uploadRes = await fetch(signedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": form.file.type
+        },
+        body: form.file
+      });
+
+      if (!uploadRes.ok) throw new Error("Upload to S3 failed.");
       // 3. Submit pet info with public URL
       const petRes = await fetch("/api/pets", {
         method: "POST",
@@ -124,7 +125,7 @@ export default function PostPetForm({ token }) {
       if (!petRes.ok) {
         const data = await petRes.json();
         throw new Error(data.error || "Failed to post pet.");
-      
+
       }
       navigate("/posts");
     } catch (err) {
@@ -141,16 +142,17 @@ export default function PostPetForm({ token }) {
       <div className="form-group">
         <label>Pet Name</label>
         <input
+          type="text"
           name="name"
           value={form.name}
           onChange={handleChange}
-          placeholder="e.g. Buddy"
+          placeholder="e.g Buddy"
           required
         />
       </div>
 
       <fieldset className="form-group">
-        <legend>Type</legend>
+        <label>Type</label>
         <div className="inline-group">
           {petTypes.map((t) => (
             <label key={t}>
@@ -168,7 +170,7 @@ export default function PostPetForm({ token }) {
       </fieldset>
 
       <fieldset className="form-group">
-        <legend>Status</legend>
+        <label>Status</label>
         <div className="inline-group">
           {statusOptions.map((s) => (
             <label key={s}>

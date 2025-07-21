@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import { jwtDecode } from "jwt-decode";
+import "./AuthForm.css";
 
 const BASE_URL = 'http://localhost:3000';
 
@@ -51,7 +52,7 @@ export default function LoginForm({ setToken }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="auth-form-container">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input name="username" placeholder="Username" onChange={handleChange} required />

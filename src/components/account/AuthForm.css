@@ -1,0 +1,92 @@
+.auth-form-container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 4rem auto;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    text-align: center;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .auth-form-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 5px cyan, 0 0 10px #2196f3;
+  }
+  
+  .auth-form-container input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: background 0.2s ease;
+  }
+  
+  .auth-form-container input::placeholder {
+    color: #bde3ff;
+    font-style: italic;
+  }
+  
+  .auth-form-container input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 10px #00ffffb7;
+  }
+  
+  .auth-form-container button {
+    margin-top: 1.25rem;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(90deg, #00ffe7, #2979ff);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .auth-form-container button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+  }
+  
+  .auth-form-container p {
+    margin-top: 1.5rem;
+    color: #ddd;
+    font-size: 0.95rem;
+  }
+  
+  .auth-form-container a {
+    color: #ff4cff;
+    text-decoration: underline;
+  }
+  
+  .auth-form-container a:hover {
+    color: #fff;
+    text-shadow: 0 0 4px #ff4cff;
+  }
+  
+  /* Error + Success messages */
+  .auth-form-container .error {
+    color: #ff4c4c;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+  
+  .auth-form-container .success {
+    color: #00ffae;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }

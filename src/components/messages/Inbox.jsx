@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import InboxRow from "./InboxRow.jsx";
 import { Link } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
+import "./Inbox.css";
 
 const Inbox = ({ token, messages, setMessages }) => {
   const socket = useSocket();
@@ -14,7 +15,7 @@ const Inbox = ({ token, messages, setMessages }) => {
         },
       });
       if (!res.ok) throw new Error("Failed to fetch messages.");
-      
+
       const data = await res.json();
       setMessages(data);
     } catch (err) {
@@ -51,7 +52,7 @@ const Inbox = ({ token, messages, setMessages }) => {
   };
 
   return (
-    <div>
+    <div className="inbox-container">
       <h2>Your Messages</h2>
 
       <Link to="/message-form" className="compose-button">
@@ -59,9 +60,9 @@ const Inbox = ({ token, messages, setMessages }) => {
       </Link>
 
       {messages.length === 0 ? (
-        <p>No messages found</p>
+        <p className="message-status">No messages found</p>
       ) : (
-        <div className="message-list">
+        <ul className="message-list">
           {messages.map((message) => (
             <InboxRow
               key={message.id}
@@ -70,7 +71,7 @@ const Inbox = ({ token, messages, setMessages }) => {
               onEdit={handleEdit}
             />
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
