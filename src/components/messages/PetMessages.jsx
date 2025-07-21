@@ -1,7 +1,9 @@
 //Displays all messages related to a specific pet id
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import InboxRow from "./InboxRow";
 import { useParams } from "react-router-dom";
+import "./PetMessages.css"
 
 const PetMessages = ({ token }) => {
   const { petId } = useParams();
@@ -27,7 +29,7 @@ const PetMessages = ({ token }) => {
       } catch (error) {
         console.error(error);
         setError(error.message);
-      } 
+      }
     };
 
     if (petId) fetchPetMessages();
@@ -44,13 +46,21 @@ const PetMessages = ({ token }) => {
   };
 
   return (
-    <div>
+     <div className="pet-messages-container">
       <h3>Messages for This Pet</h3>
+
       {loading && <p>Loading messages...</p>}
       {error && <p>{error}</p>}
       {!loading && !error && messages.length === 0 && (
         <p>No messages for this pet.</p>
       )}
+      <Link
+        to={`/message-form/0/${petId}`}
+        className="message-button"
+        style={{ display: "inline-block", marginBottom: "1rem" }}
+      >
+        📨 Send a Message About This Pet
+      </Link>
       {messages && (
         <ul>
           {messages.map((message) => (

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { useParams } from "react-router-dom";
+import "./MessageForm.css";
 
 const MessageForm = ({ token, onMessageSent }) => {
   const { receiverId, petId } = useParams();
-  const isGlobalRoute = receiverId === "global";//Sets the mode depending on the route. 
+  const isGlobalRoute = receiverId === "global";
 
   const [content, setContent] = useState("");
   const [receiver, setReceiver] = useState(receiverId !== "global" ? receiverId : "");
@@ -21,40 +22,21 @@ const MessageForm = ({ token, onMessageSent }) => {
     const fetchData = async () => {
       try {
         const [userRes, petRes] = await Promise.all([
-          fetch("/api/users", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("/api/pets", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch("/api/users", { headers: { Authorization: `Bearer ${token}` } }),
+          fetch("/api/pets", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
-
-        if (!userRes.ok || !petRes.ok) {
-          throw new Error("Failed to fetch data.");
-        }
-
-        const usersData = await userRes.json();
-        const petsData = await petRes.json();
-        setUsers(usersData);
-        setPets(petsData);
-      } catch (err) {
+        if (!userRes.ok || !petRes.ok) throw new Error("Failed to fetch data.");
+        setUsers(await userRes.json());
+        setPets(await petRes.json());
+      } catch {
         setError("Failed to load users or pets.");
       }
     };
-
     fetchData();
   }, [token]);
 
-  //Ensures the UI responds to route changes. 
-  useEffect(() => {
-    if (isGlobalRoute) {
-      setIsGlobal(true);
-    } else {
-      setIsGlobal(false);//Reset on navigation
-    }
-  }, [isGlobalRoute]);
+  useEffect(() => setIsGlobal(isGlobalRoute), [isGlobalRoute]);
 
-  //Clears state on global toggle. Prevents accidental sending of private data with a global message. 
   useEffect(() => {
     if (isGlobal) {
       setReceiver("");
@@ -69,21 +51,12 @@ const MessageForm = ({ token, onMessageSent }) => {
 
     try {
       if (!content.trim()) {
-        setSuccess(null); // Clear any previous success message
+        setSuccess(null);
         throw new Error("Please enter a valid message.");
       }
-      if (!isGlobal) {
-        if (!receiver || !pet) {
-          throw new Error("Please select both a user and a pet before sending a private message.");
-        }
+      if (!isGlobal && (!receiver || !pet)) {
+        throw new Error("Please select both a user and a pet before sending a private message.");
       }
-
-      const body = {
-        receiver_id: isGlobal ? null : parseInt(receiver),
-        pet_id: isGlobal ? null : parseInt(pet),
-        content,
-        is_global: isGlobal,
-      };
 
       const res = await fetch("/api/messages", {
         method: "POST",
@@ -91,7 +64,12 @@ const MessageForm = ({ token, onMessageSent }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          receiver_id: isGlobal ? null : parseInt(receiver),
+          pet_id: isGlobal ? null : parseInt(pet),
+          content,
+          is_global: isGlobal,
+        }),
       });
 
       if (!res.ok) {
@@ -104,7 +82,6 @@ const MessageForm = ({ token, onMessageSent }) => {
       setReceiver("");
       setPet("");
       setSuccess("Message sent!");
-
       if (onMessageSent) onMessageSent(newMessage);
     } catch (error) {
       setError(error.message);
@@ -113,17 +90,16 @@ const MessageForm = ({ token, onMessageSent }) => {
     }
   };
 
-
   return (
     <form onSubmit={handleSubmit} className="message-form-container">
+      <h2>Send a Message</h2>
+
       <div className="form-checkbox-group">
         <input
           type="checkbox"
           id="global"
           checked={isGlobal}
-          onChange={() => {
-            if (!isGlobalRoute) setIsGlobal(!isGlobal);
-          }}
+          onChange={() => !isGlobalRoute && setIsGlobal(!isGlobal)}
           disabled={isGlobalRoute}
         />
         <label htmlFor="global">Send Global Message</label>
@@ -133,17 +109,10 @@ const MessageForm = ({ token, onMessageSent }) => {
         <>
           <div className="form-group">
             <label htmlFor="receiver">Send to:</label>
-            <select
-              id="receiver"
-              value={receiver}
-              onChange={(e) => setReceiver(e.target.value)}
-              required
-            >
+            <select id="receiver" value={receiver} onChange={(e) => setReceiver(e.target.value)} required>
               <option value="">-- Select a user --</option>
               {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
+                <option key={user.id} value={user.id}>{user.username}</option>
               ))}
             </select>
           </div>
@@ -157,9 +126,9 @@ const MessageForm = ({ token, onMessageSent }) => {
               disabled={!receiver}
             >
               <option value="">-- Select a pet --</option>
-              {pets.map((pet) => (
-                <option key={pet.id} value={pet.id}>
-                  {pet.name} ({pet.status})
+              {pets.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.status})
                 </option>
               ))}
             </select>
@@ -180,19 +149,14 @@ const MessageForm = ({ token, onMessageSent }) => {
         ></textarea>
       </div>
 
-      {/*Disables submit button until there is input*/}
       <button type="submit" disabled={loading || !content.trim()}>
         {loading ? "Sending..." : "Send Message"}
       </button>
-      {
-        !content.trim() && !success && (
-          <p style={{ color: "orange" }}>Please enter a valid message.</p>
-        )
-      }
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-    </form >
+      {!content.trim() && !success && <p className="warning-msg">Please enter a valid message.</p>}
+      {error && <p className="error-msg">{error}</p>}
+      {success && <p className="success-msg">{success}</p>}
+    </form>
   );
 };
 

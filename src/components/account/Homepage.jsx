@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup
-} from "react-leaflet";
+import { useEffect, useState } from "react";
+import MapView from "../MapView";
+import PostPetForm from "../pets/PostPetForm";
+import Inbox from "../messages/Inbox";
+import Profile from "../account/Profile";
 import "leaflet/dist/leaflet.css";
+import "./Homepage.css";
 
 export default function Homepage() {
-  const [latestPost, setLatestPost] = useState(null);
+  const [latestPosts, setLatestPosts] = useState([]);
   const [pets, setPets] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem("authToken") || null);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -18,7 +19,7 @@ export default function Homepage() {
         const res = await fetch("/api/pets");
         const data = await res.json();
         if (data.length > 0) {
-          setLatestPost(data[0]); // assuming newest first
+          setLatestPosts(data.slice(0, 3));//latests three posts
         }
         setPets(data.filter(pet => pet.lat != null && pet.lng != null));
       } catch (err) {
@@ -30,51 +31,59 @@ export default function Homepage() {
   }, []);
 
   return (
-    <div className="homepage">
-      <h1>Welcome to 404:Pet Not Found</h1>
-      <p>Find and report lost or found pets in your community.</p>
-
-      {pets.length > 0 && (
-        <div style={{ marginBottom: 24 }}>
-          <h3>Pet Map</h3>
-          <MapContainer
-            center={[pets[0].lat, pets[0].lng]}
-            zoom={4}
-            style={{ height: 400, width: "100%", borderRadius: 8 }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
-            />
-            {pets.map(pet => (
-              <Marker key={pet.id} position={[pet.lat, pet.lng]}>
-                <Popup>
-                  <strong>{pet.name}</strong><br />
-                  {pet.status}<br />
-                  {pet.location}
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+    <>
+      <div id="home" className="homepage">
+        <h1>
+          Welcome to 404: Pet Not Found{" "}
+          <span>
+            <p className="tagline">
+              Geolocation: Because calling their name doesn’t always work
+            </p>
+          </span>
+        </h1>
+      </div>
+     <div id="latest" className="latest-posts">
+        <h3>Latest Posts</h3>
+        <div className="latest-posts-grid">
+          {latestPosts.map((pet) => (
+            <div className="post-card" key={pet.id}>
+              <p><strong>{pet.name}</strong> ({pet.status})</p>
+              <p>{pet.description}</p>
+              {pet.image_url && (
+                <img
+                  src={pet.image_url}
+                  alt={pet.name}
+                  className="latest-post-image"
+                />
+              )}
+            </div>
+          ))}
         </div>
-      )}
-
-      <Link to="/posts" className="listings-button">View All Listings</Link>
-
-      {latestPost && (
-        <div className="latest-post">
-          <h3>Latest Post</h3>
-          <p><strong>{latestPost.name}</strong> ({latestPost.status})</p>
-          <p>{latestPost.description}</p>
-          {latestPost.image_url && (
-            <img
-              src={latestPost.image_url}
-              alt={latestPost.name}
-              className="latest-post-image"
+      </div>
+      <div id="map" className="pet-map-section">
+        <h3>Pet Listings Map</h3>
+        <div className="map-and-button">
+          {pets.length > 0 && (
+            <MapView
+              center={[pets[0].lat, pets[0].lng]}
+              zoom={13}
+              markers={pets.map(pet => ({
+                position: [pet.lat, pet.lng],
+                label: (
+                  <>
+                    <strong>{pet.name}</strong>
+                    <br />
+                    {pet.status}
+                    <br />
+                    {pet.location}
+                  </>
+                )
+              }))}
             />
           )}
+          <Link to="/posts" className="listings-button">View All Listings</Link>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

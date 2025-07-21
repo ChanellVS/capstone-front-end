@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import "./ViewListings.css"
 
 export default function ViewListings() {
   const [pets, setPets] = useState([]);
@@ -18,7 +19,7 @@ export default function ViewListings() {
   }, []);
 
   if (loading) return <p>Loading listings…</p>;
-  if (error)   return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div className="listings-page">
@@ -26,26 +27,24 @@ export default function ViewListings() {
       {pets.length === 0 ? (
         <p>No pets found.</p>
       ) : (
-        <ul className="pet-list">
-          {pets.map((pet) => (
-            <li key={pet.id} className="pet-card">
+      <ul className="pet-list">
+        {pets.map((pet) => (
+          <Link key={pet.id} to={`/pet/${pet.id}`} className="pet-card-link">
+            <li className="pet-card">
               {pet.image_url && (
-                <img src={pet.image_url}
-                     alt={pet.name}
-                     className="pet-thumbnail" />
+                <img
+                  src={pet.image_url}
+                  alt={pet.name}
+                  className="pet-thumbnail"
+                />
               )}
-              <h3>
-                <Link to={`/pet/${pet.id}`}>
-                  {pet.name}
-                </Link>
-                {" "}
-                <small>({pet.status})</small>
-              </h3>
+              <h3>{pet.name} <small>({pet.status})</small></h3>
               <p>{pet.description}</p>
               <p><em>Location:</em> {pet.location}</p>
             </li>
-          ))}
-        </ul>
+          </Link>
+        ))}
+      </ul>
       )}
     </div>
   );
