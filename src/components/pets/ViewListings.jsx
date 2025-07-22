@@ -18,7 +18,7 @@ export default function ViewListings() {
       })
       .then((data) => {
         setPets(data);
-        setFilteredPets(data); // initialize filteredPets
+        setFilteredPets(data);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -37,21 +37,17 @@ export default function ViewListings() {
     });
 
     setFilteredPets(filtered);
-    setIsFiltered(true); // Mark that search is active
+    setIsFiltered(true);
   };
 
-  // ✅ Clear search results and return to full list
   const handleClearSearch = () => {
     setFilteredPets(pets);
     setIsFiltered(false);
   };
 
-  if (loading) return <p>Loading listings…</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   return (
     <div className="listings-page">
-      <h2>All Pet Listings</h2>
+      <h2 className="listings-heading">All Pet Listings</h2>
 
       <PetSearchBar onSearch={handlePetSearch} />
 
@@ -61,27 +57,38 @@ export default function ViewListings() {
         </button>
       )}
 
-      {filteredPets.length === 0 ? (
+      {loading ? (
+        <div className="loading-placeholder" aria-live="polite">
+          <p>Loading listings…</p>
+          <div style={{ minHeight: "400px" }} />
+        </div>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : filteredPets.length === 0 ? (
         <p>No pets found.</p>
       ) : (
         <ul className="pet-list">
           {filteredPets.map((pet) => (
-            <Link key={pet.id} to={`/pet/${pet.id}`} className="pet-card-link">
-              <li className="pet-card">
-                {pet.image_url && (
-                  <img
-                    src={pet.image_url}
-                    alt={pet.name}
-                    className="pet-thumbnail"
-                  />
-                )}
-                <h3>
-                  {pet.name} <small>({pet.status})</small>
-                </h3>
-                <p>{pet.description}</p>
-                <p><em>Location:</em> {pet.location}</p>
-              </li>
-            </Link>
+            <li key={pet.id} className="pet-card">
+              <Link to={`/pet/${pet.id}`} className="pet-card-link">
+                <div>
+                  {pet.image_url && (
+                    <img
+                      src={pet.image_url}
+                      alt={pet.name}
+                      className="pet-thumbnail"
+                    />
+                  )}
+                  <h3>
+                    {pet.name} <small>({pet.status})</small>
+                  </h3>
+                  <p>{pet.description}</p>
+                  <p>
+                    <em>Location:</em> {pet.location}
+                  </p>
+                </div>
+              </Link>
+            </li>
           ))}
         </ul>
       )}

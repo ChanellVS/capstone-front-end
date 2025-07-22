@@ -8,6 +8,7 @@ const BASE_URL = 'http://localhost:3000';
 
 export default function LoginForm({ setToken }) {
   const [formData, setFormData] = useState({ username: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const socket = useSocket();
@@ -56,7 +57,9 @@ export default function LoginForm({ setToken }) {
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input name="username" placeholder="Username" onChange={handleChange} required />
-      <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+      <div className="password-toggle-container">
+      <input name="password"type={showPassword ? "text" : "password"} placeholder="Password"onChange={handleChange} required />
+      <label> <input type="checkbox"checked={showPassword} onChange={() => setShowPassword(!showPassword)}/> Show Password</label></div>
       <button type="submit">Login</button>
       <p>
         Don’t have an account? <Link to="/register">Register here</Link>
