@@ -28,6 +28,15 @@
     gap: 1.5rem;
     padding: 0;
     margin: 0 auto;
+    overflow: hidden; /* ✅ Prevent overflow from scaling */
+  }
+  
+  .pet-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden; /* ✅ Keep hover scale within link bounds */
   }
   
   .pet-card {
@@ -46,7 +55,7 @@
   }
   
   .pet-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px); /* subtle elevation */
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
   }
   
@@ -76,26 +85,12 @@
     color: #eee;
   }
   
-  .pet-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 12px;
-  }
-  
-  .pet-card-link:hover {
-    transform: scale(1.050);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  }
-  
-  /* ✅ Return to Listings Button */
   .clear-search-button {
     margin: 1.5rem auto 2rem auto;
     display: inline-block;
     padding: 0.7rem 1.8rem;
     background: linear-gradient(90deg, #00ffe7, #2979ff);
-    color: #000;
+    color: #070707;
     font-family: 'Orbitron', sans-serif;
     font-size: 1rem;
     font-weight: bold;
