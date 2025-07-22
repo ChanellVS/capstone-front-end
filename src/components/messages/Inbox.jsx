@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import InboxRow from "./InboxRow.jsx";
+import MessageSearchBar from "./MessageSearchBar.jsx";
 import { Link } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import "./Inbox.css";
 
 const Inbox = ({ token, messages, setMessages }) => {
   const socket = useSocket();
+  const [filteredMessages, setFilteredMessages] = useState(messages);
 
   const fetchMessages = async () => {
     try {
@@ -18,6 +20,7 @@ const Inbox = ({ token, messages, setMessages }) => {
 
       const data = await res.json();
       setMessages(data);
+      setFilteredMessages(data); // Update filtered too
     } catch (err) {
       console.error(err);
     }
@@ -37,18 +40,38 @@ const Inbox = ({ token, messages, setMessages }) => {
     }
   }, [socket, token]);
 
+  // Update filtered messages whenever `messages` changes (e.g. deletion or fetch)
+  useEffect(() => {
+    setFilteredMessages(messages);
+  }, [messages]);
+
   const handleDelete = (id) => {
-    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+    const updated = messages.filter((msg) => msg.id !== id);
+    setMessages(updated);
+    setFilteredMessages(updated);
   };
 
   const handleEdit = (updatedMessage) => {
-    setMessages((prev) =>
-      prev.map((msg) =>
-        msg.id === updatedMessage.id
-          ? { ...msg, content: updatedMessage.content }
-          : msg
-      )
+    const updated = messages.map((msg) =>
+      msg.id === updatedMessage.id
+        ? { ...msg, content: updatedMessage.content }
+        : msg
     );
+    setMessages(updated);
+    setFilteredMessages(updated);
+  };
+
+  const handleMessageSearch = (term) => {
+    const filtered = messages.filter((msg) => {
+      const lower = term.toLowerCase();
+      return (
+        msg.sender_username?.toLowerCase().includes(lower) ||
+        msg.receiver_username?.toLowerCase().includes(lower) ||
+        msg.content?.toLowerCase().includes(lower) ||
+        msg.pet_name?.toLowerCase().includes(lower)
+      );
+    });
+    setFilteredMessages(filtered);
   };
 
   return (
@@ -59,11 +82,14 @@ const Inbox = ({ token, messages, setMessages }) => {
         Compose New Message
       </Link>
 
-      {messages.length === 0 ? (
+      {/* ✅ Message Search Bar */}
+      <MessageSearchBar onSearch={handleMessageSearch} />
+
+      {filteredMessages.length === 0 ? (
         <p className="message-status">No messages found</p>
       ) : (
         <ul className="message-list">
-          {messages.map((message) => (
+          {filteredMessages.map((message) => (
             <InboxRow
               key={message.id}
               message={message}
