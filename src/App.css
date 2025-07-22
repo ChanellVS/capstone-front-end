@@ -22,8 +22,10 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
   pointer-events: none;
 }
@@ -36,7 +38,9 @@ body::before {
 }
 
 /* Global Headings & Paragraphs */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin-bottom: 1rem;
   color: #f8f8f8;
   font-weight: 600;
