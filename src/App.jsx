@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/account/ProtectedRoute";
 import ViewListings from "./components/pets/ViewListings.jsx";
 import PostPetForm from "./components/pets/PostPetForm.jsx";
 import PetDetail from "./components/pets/PetDetail.jsx";
+import AnimatedPaw from "./components/AnimatedPaw.jsx";
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
@@ -20,6 +21,7 @@ import "./App.css";
 function App() {
   const [token, setToken] = useState(localStorage.getItem("authToken") || null);
   const [messages, setMessages] = useState([]);
+  const [pets, setPets] = useState([]);
   const socket = useSocket();
 
   useEffect(() => {
@@ -28,6 +30,7 @@ function App() {
     }
   }, [token]);
 
+  // Fetch Messages
   useEffect(() => {
     const fetchMessages = async () => {
       if (!token) return;
@@ -46,6 +49,23 @@ function App() {
     fetchMessages();
   }, [token]);
 
+  // Fetch Pets
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const res = await fetch("/api/pets");
+        if (!res.ok) throw new Error("Failed to fetch pets.");
+        const data = await res.json();
+        setPets(data);
+      } catch (err) {
+        console.error("Failed to load pets:", err);
+      }
+    };
+
+    fetchPets();
+  }, []);
+
+  // WebSocket setup
   useEffect(() => {
     if (!socket || !token) return;
 
@@ -72,10 +92,12 @@ function App() {
   return (
     <>
       <Navbar token={token} setToken={setToken} />
-
+      <AnimatedPaw />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/posts" element={<ViewListings />} />
+
+        <Route path="/posts" element={<ViewListings allPets={pets} />} />
+
         <Route
           path="/postPet"
           element={
@@ -84,6 +106,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/inbox"
           element={
@@ -92,6 +115,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/profile"
           element={
@@ -100,8 +124,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/register" element={<RegisterForm setToken={setToken} />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
+
         <Route
           path="/messages/pet/:petId"
           element={
@@ -110,6 +136,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/pet/:petId"
           element={
@@ -118,6 +145,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/message-form/:receiverId/:petId"
           element={
@@ -126,6 +154,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/message-form"
           element={
