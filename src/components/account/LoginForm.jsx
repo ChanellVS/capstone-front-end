@@ -56,10 +56,36 @@ export default function LoginForm({ setToken }) {
     <form onSubmit={handleSubmit} className="auth-form-container">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <input name="username" placeholder="Username" onChange={handleChange} required />
-      <div className="password-toggle-container">
-      <input name="password"type={showPassword ? "text" : "password"} placeholder="Password"onChange={handleChange} required />
-      <label> <input type="checkbox"checked={showPassword} onChange={() => setShowPassword(!showPassword)}/> Show Password</label></div>
+
+      <label htmlFor="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        placeholder="Username"
+        autoComplete="username"
+        onChange={handleChange}
+        required
+      />
+
+      <label htmlFor="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        placeholder="Password"
+        autoComplete="current-password"
+        onChange={handleChange}
+        required
+      />
+
+      <label>
+        <input
+          type="checkbox"
+          checked={showPassword}
+          onChange={() => setShowPassword(!showPassword)}
+        /> Show Password
+      </label>
+
       <button type="submit">Login</button>
       <p>
         Don’t have an account? <Link to="/register">Register here</Link>

@@ -83,9 +83,8 @@ export default function ViewListings() {
                     {pet.name} <small>({pet.status})</small>
                   </h3>
                   <p>{pet.description}</p>
-                  <p>
-                    <em>Location:</em> {pet.location}
-                  </p>
+                  <p><em>Location:</em> {pet.location}</p>
+                  <p><em>Posted by:</em> {pet.owner_username || "Unknown"}</p>
                 </div>
               </Link>
             </li>
