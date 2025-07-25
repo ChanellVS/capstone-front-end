@@ -3,7 +3,7 @@
     font-size: 8rem;
     opacity: 0.3;
     color: #00ffff;
-    animation: walkTrail var(--duration, 3s) ease-in-out forwards;
+    animation: walkTrail var(--duration, 1s) ease-in-out forwards;
     pointer-events: none;
     z-index: 99;
     filter: drop-shadow(0 0 6px #00ffff);
@@ -17,7 +17,7 @@
     }
   
     10% {
-      opacity: 0.8;
+      opacity: 0.4;
     }
   
     100% {

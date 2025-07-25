@@ -82,7 +82,7 @@ const Inbox = ({ token, messages, setMessages }) => {
         Compose New Message
       </Link>
 
-      {/* ✅ Message Search Bar */}
+      {/*Message Search Bar */}
       <MessageSearchBar onSearch={handleMessageSearch} />
 
       {filteredMessages.length === 0 ? (

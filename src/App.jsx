@@ -14,6 +14,7 @@ import ViewListings from "./components/pets/ViewListings.jsx";
 import PostPetForm from "./components/pets/PostPetForm.jsx";
 import PetDetail from "./components/pets/PetDetail.jsx";
 import AnimatedPaw from "./components/AnimatedPaw.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 import { useSocket } from "./context/SocketContext";
 import "./App.css";
@@ -24,6 +25,13 @@ function App() {
   const [pets, setPets] = useState([]);
   const socket = useSocket();
 
+  // Disable browser scroll restoration
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
   useEffect(() => {
     if (token) {
       localStorage.setItem("authToken", token);
@@ -32,8 +40,8 @@ function App() {
 
   // Fetch Messages
   useEffect(() => {
+    if (!token) return;
     const fetchMessages = async () => {
-      if (!token) return;
       try {
         const res = await fetch("/api/messages/inbox", {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +53,6 @@ function App() {
         console.error("Failed to load messages:", err);
       }
     };
-
     fetchMessages();
   }, [token]);
 
@@ -61,11 +68,10 @@ function App() {
         console.error("Failed to load pets:", err);
       }
     };
-
     fetchPets();
   }, []);
 
-  // WebSocket setup
+  // WebSocket setup for real-time messages
   useEffect(() => {
     if (!socket || !token) return;
 
@@ -93,9 +99,9 @@ function App() {
     <>
       <Navbar token={token} setToken={setToken} />
       <AnimatedPaw />
+      <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Homepage />} />
-
+        <Route path="/" element={<Homepage token={token} />} />
         <Route path="/posts" element={<ViewListings allPets={pets} />} />
 
         <Route

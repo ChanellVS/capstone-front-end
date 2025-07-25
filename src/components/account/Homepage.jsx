@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import MapView from "../MapView";
 import "leaflet/dist/leaflet.css";
+import ChatRoom from "../messages/ChatRoom.jsx";
 import "./Homepage.css";
 
-export default function Homepage() {
+export default function Homepage({ token }) {
   const [latestPosts, setLatestPosts] = useState([]);
   const [pets, setPets] = useState([]);
 
@@ -14,9 +15,9 @@ export default function Homepage() {
         const res = await fetch("/api/pets");
         const data = await res.json();
         if (data.length > 0) {
-          setLatestPosts(data.slice(0, 3)); // latest 3 posts
+          setLatestPosts(data.slice(0, 3));
         }
-        setPets(data.filter(pet => pet.lat != null && pet.lng != null));
+        setPets(data.filter((pet) => pet.lat != null && pet.lng != null));
       } catch (err) {
         console.error("Failed to fetch pets:", err);
       }
@@ -24,6 +25,16 @@ export default function Homepage() {
 
     fetchPets();
   }, []);
+
+  const scrollToChat = () => {
+    const chatSection = document.getElementById("chat-section");
+    if (chatSection) {
+      window.scrollTo({
+        top: chatSection.offsetTop - 60,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <>
@@ -37,6 +48,15 @@ export default function Homepage() {
             </p>
           </span>
         </h1>
+
+        {/* Go to Chat Button */}
+        {token && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <button className="listings-button" onClick={scrollToChat}>
+              Go to Community Chat
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Map Section */}
@@ -46,7 +66,7 @@ export default function Homepage() {
           <MapView
             center={[pets[0].lat, pets[0].lng]}
             zoom={13}
-            markers={pets.map(pet => ({
+            markers={pets.map((pet) => ({
               position: [pet.lat, pet.lng],
               label: (
                 <>
@@ -56,20 +76,26 @@ export default function Homepage() {
                   <br />
                   {pet.location}
                 </>
-              )
+              ),
             }))}
           />
         )}
       </div>
 
-      {/* Latest Posts Section */}
+      {/* Latest Posts */}
       <h3 className="latest-title">Latest Posts</h3>
       <div id="latest" className="homepage-latest">
         <div className="latest-posts-grid">
           {latestPosts.map((pet) => (
-            <Link to={`/pet/${pet.id}`} className="latest-post-card-link" key={pet.id}>
+            <Link
+              to={`/pet/${pet.id}`}
+              className="latest-post-card-link"
+              key={pet.id}
+            >
               <div className="post-card">
-                <p><strong>{pet.name}</strong> ({pet.status})</p>
+                <p>
+                  <strong>{pet.name}</strong> ({pet.status})
+                </p>
                 <p>{pet.description}</p>
                 {pet.image_url && (
                   <img
@@ -83,13 +109,19 @@ export default function Homepage() {
           ))}
         </div>
 
-        {/* View All Listings Button */}
         <div className="button-wrapper" style={{ marginTop: "2rem" }}>
           <Link to="/posts" className="listings-button">
             View All Listings
           </Link>
         </div>
       </div>
+
+      {/* Chat Room */}
+      {token && (
+        <div id="chat-section" className="chatroom-wrapper" style={{ marginTop: "3rem" }}>
+          <ChatRoom token={token} />
+        </div>
+      )}
     </>
   );
 }

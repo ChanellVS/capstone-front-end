@@ -26,14 +26,27 @@ const MessageForm = ({ token, onMessageSent }) => {
           fetch("/api/pets", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
         if (!userRes.ok || !petRes.ok) throw new Error("Failed to fetch data.");
-        setUsers(await userRes.json());
-        setPets(await petRes.json());
+        const userData = await userRes.json();
+        const petData = await petRes.json();
+        setUsers(userData);
+        setPets(petData);
+
+        //Pre-fills receiver based on petId
+        if (petId && petId !== "0") {
+          const selectedPet = petData.find((p) => p.id === parseInt(petId));
+          if (selectedPet) {
+            setPet(selectedPet.id.toString());
+            if (selectedPet.owner_id) {
+              setReceiver(selectedPet.owner_id.toString());
+            }
+          }
+        }
       } catch {
         setError("Failed to load users or pets.");
       }
     };
     fetchData();
-  }, [token]);
+  }, [token, petId]);
 
   useEffect(() => setIsGlobal(isGlobalRoute), [isGlobalRoute]);
 
@@ -109,7 +122,13 @@ const MessageForm = ({ token, onMessageSent }) => {
         <>
           <div className="form-group">
             <label htmlFor="receiver">Send to:</label>
-            <select id="receiver" value={receiver} onChange={(e) => setReceiver(e.target.value)} required>
+            <select
+              id="receiver"
+              value={receiver}
+              onChange={(e) => setReceiver(e.target.value)}
+              required
+              disabled={!!petId} //locks receiver if coming from pet detail page
+            >
               <option value="">-- Select a user --</option>
               {users.map((user) => (
                 <option key={user.id} value={user.id}>{user.username}</option>
@@ -123,7 +142,7 @@ const MessageForm = ({ token, onMessageSent }) => {
               id="pet"
               value={pet}
               onChange={(e) => setPet(e.target.value)}
-              disabled={!receiver}
+              disabled={!!petId} //locks pet if pre-selected
             >
               <option value="">-- Select a pet --</option>
               {pets.map((p) => (
